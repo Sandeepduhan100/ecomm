@@ -4,35 +4,52 @@ import UserModel from '@/app/lib/models/UserModel'
 import bcrypt from 'bcryptjs'
 
 export const PUT = auth(async (req) => {
-  if (!req.auth) {
-    return Response.json({ message: 'Not authenticated' }, { status: 401 })
-  }
-  const { user } = req.auth
-  const { name, email, password } = await req.json()
-  await dbConnect()
   try {
-    const dbUser = await UserModel.findById(user._id)
-    if (!dbUser) {
-      return Response.json(
-        { message: 'User not found' },
-        {
-          status: 404,
-        }
-      )
+    if (!req.auth) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ message: 'Not authenticated' }),
+      };
     }
-    dbUser.name = name
-    dbUser.email = email
-    dbUser.password = password
-      ? await bcrypt.hash(password, 5)
-      : dbUser.password
-    await dbUser.save()
-    return Response.json({ message: 'User has been updated' })
-  } catch (err: any) {
-    return Response.json(
-      { message: err.message },
-      {
-        status: 500,
-      }
-    )
+
+    const { user } = req.auth;
+    const { name, email, password } = await req.json();
+
+    // Validate input data
+    if (!name || !email) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Name and email are required' }),
+      };
+    }
+
+    await dbConnect();
+    const dbUser = await UserModel.findById(user._id);
+
+    if (!dbUser) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'User not found' }),
+      };
+    }
+
+    dbUser.name = name;
+    dbUser.email = email;
+    dbUser.password = password ? await bcrypt.hash(password, 5) : dbUser.password;
+
+    await dbUser.save();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'User has been updated' }),
+    };
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Error in PUT request:', error);
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Internal server error' }),
+    };
   }
-}) as any
+}) as any;
