@@ -28,7 +28,7 @@ export const POST = auth(async (req: any) => {
     );
   }
 
-  const { user } = req.auth as { user: { _id: string; name: string } };
+  const { user } = await req.auth as { user: { _id: string; name: string } };
 
   console.log(req.auth);
 
@@ -62,7 +62,7 @@ export const POST = auth(async (req: any) => {
       user: user._id,
     });
 
-    console.log(newOrder);
+   
 
     const createdOrder = await newOrder.save();
 

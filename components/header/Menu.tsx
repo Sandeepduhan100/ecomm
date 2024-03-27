@@ -17,7 +17,13 @@ const Menu = () => {
     init()
   }
 
-  const { data: session } = useSession()
+  const { data: session } = useSession();
+  useEffect(() => {
+    console.log('Initial session:', session);
+    console.log('Initial user:', session?.user);
+  }, []);
+  
+  
   return (
     <div>
       <ul className="flex items-stretch">
@@ -32,11 +38,14 @@ const Menu = () => {
           </Link>
         </li>
         {session && session.user ? (
+          
           <>
             <li>
               <div className="dropdown dropdown-bottom dropdown-end">
                 <label tabIndex={0} className="btn btn-ghost rounded-btn">
-                  {session.user.name}
+                  {session.user.name
+                  
+                  }
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

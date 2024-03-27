@@ -166,7 +166,12 @@ export default function OrderDetails({
                 {!isPaid && paymentMethod === 'PayPal' && (
                   <li>
                     <PayPalScriptProvider
-                      options={{ clientId: paypalClientId }}
+                      options={{ clientId: paypalClientId }
+                    
+                    
+                    }
+                      
+                      
                     >
                       <PayPalButtons
                         createOrder={createPayPalOrder}

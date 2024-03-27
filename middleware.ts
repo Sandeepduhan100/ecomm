@@ -1,10 +1,12 @@
 import NextAuth from 'next-auth'
 import type { NextAuthConfig } from 'next-auth'
 
-const authConfig = {
+const authConfig: NextAuthConfig = {
   providers: [],
   callbacks: {
-    authorized({ request, auth }: any) {
+    async authorized({ request, auth }: any) {
+      console.log("Inside authorized callback");
+      
       const protectedPaths = [
         /\/shipping/,
         /\/payment/,
@@ -18,7 +20,7 @@ const authConfig = {
       return true
     },
   },
-} satisfies NextAuthConfig
+}
 
 export const { auth: middleware } = NextAuth(authConfig)
 

@@ -14,13 +14,11 @@ export const config = {
         password: { type: 'password' },
       },
       async authorize(credentials) {
-        console.log('Authorize function is invoked');
+        console.log("Inside authorize function");
+        console.log("Credentials:", credentials);
+
         await dbConnect()
-        if (credentials == null)
-        
-      {
-        console.log('Credentials are null');
-          return null}
+        if (credentials == null) return null
 
         const user = await UserModel.findOne({ email: credentials.email })
 
@@ -30,11 +28,11 @@ export const config = {
             user.password
           )
           if (isMatch) {
-            console.log('User found:', user);
+            console.log("User found and authenticated:", user);
             return user
           }
         }
-        console.log('User not found or password does not match');
+        console.log("User not found or authentication failed");
         return null
       },
     }),
@@ -45,8 +43,9 @@ export const config = {
     error: '/signin',
   },
   callbacks: {
-    
     async jwt({ user, trigger, session, token }: any) {
+      console.log("let check",user, trigger, session, token );
+      
       if (user) {
         token.user = {
           _id: user._id,
@@ -62,22 +61,22 @@ export const config = {
           name: session.user.name,
         }
       }
+      console.log("JWT callback token:", token);
       return token
     },
     session: async ({ session, token }: any) => {
       if (token) {
         session.user = token.user
       }
+      console.log("Session callback session:", session);
       return session
     },
   },
-}   
+}
 
-
-export const {handlers: { GET, POST },
-auth,
-signIn,
-signOut,
+export const {
+  handlers: { GET, POST },
+  auth,
+  signIn,
+  signOut,
 } = NextAuth(config)
-
-
